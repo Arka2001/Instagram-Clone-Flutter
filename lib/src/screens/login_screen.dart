@@ -24,9 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 32),
+          height: MediaQuery.of(context).size.height,
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
