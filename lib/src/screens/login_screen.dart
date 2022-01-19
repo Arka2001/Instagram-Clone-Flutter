@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/src/services/services.dart';
 import 'package:instagram_clone/src/utils/colors.dart';
+import 'package:instagram_clone/src/utils/utils.dart';
 import 'package:instagram_clone/src/widgets/widgets.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,12 +15,30 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    String res = await AuthServices().logIn(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == "success") {
+    } else {
+      showSnackBar(res, context);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -61,23 +81,27 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 30),
               // * Login Button
               InkWell(
-                onTap: () {
-                  //TODO Implement Login from Firebase Auth
-                },
-                child: Container(
-                  child: const Text('Log In'),
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+                onTap: loginUser,
+                child: isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      )
+                    : Container(
+                        child: const Text('Log In'),
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: const ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          color: blueColor,
+                        ),
                       ),
-                    ),
-                    color: blueColor,
-                  ),
-                ),
               ),
               const SizedBox(height: 15),
               Flexible(

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/src/utils/utils.dart';
 
 import '../services/services.dart';
 import '../utils/colors.dart';
@@ -21,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? image = Uint8List(0);
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -39,6 +41,10 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void signUpUser() async {
+    setState(() {
+      isLoading = true;
+    });
+
     String res = await AuthServices().signUp(
       email: _emailController.text,
       password: _passwordController.text,
@@ -47,16 +53,13 @@ class _SignupScreenState extends State<SignupScreen> {
       imageFile: image!,
     );
 
-    print(res);
-
-    if (res == 'success') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Successfully signed up'),
-          backgroundColor: Colors.green,
-        ),
-      );
+    if (res != 'success') {
+      showSnackBar(res, context);
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -141,20 +144,26 @@ class _SignupScreenState extends State<SignupScreen> {
               // * Login Button
               InkWell(
                 onTap: signUpUser,
-                child: Container(
-                  child: const Text('Sign Up'),
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+                child: isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      )
+                    : Container(
+                        child: const Text('Sign Up'),
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: const ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          color: blueColor,
+                        ),
                       ),
-                    ),
-                    color: blueColor,
-                  ),
-                ),
               ),
               const SizedBox(height: 15),
               Flexible(

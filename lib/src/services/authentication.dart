@@ -53,4 +53,26 @@ class AuthServices {
 
     return res;
   }
+
+  //* Login
+
+  Future<String> logIn(
+      {required String email, required String password}) async {
+    String res = 'Some unexpected Error Occurred';
+
+    try {
+      if (email.isNotEmpty || password.isNotEmpty) {
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+
+        res = "Success";
+      } else {
+        res = "Please Enter all the Fields";
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
 }
