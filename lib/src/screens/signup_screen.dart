@@ -2,11 +2,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:instagram_clone/src/utils/utils.dart';
+import 'package:instagram_clone/src/responsive/responsive.dart';
+import 'package:instagram_clone/src/screens/login_screen.dart';
 
+import '../utils/utils.dart';
 import '../services/services.dart';
-import '../utils/colors.dart';
-import '../utils/pick_image.dart';
 import '../widgets/widgets.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -55,11 +55,29 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (res != 'success') {
       showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (ctx) => const ResponsiveLayout(
+            mobileLayout: MobileScreenLayout(),
+            webLayout: WebScreenLayout(),
+          ),
+        ),
+      );
     }
 
     setState(() {
       isLoading = false;
     });
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (ctx) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -180,9 +198,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
-                    onTap: () {
-                      //TODO GO to Log In Screen
-                    },
+                    onTap: navigateToLogin,
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Text(
