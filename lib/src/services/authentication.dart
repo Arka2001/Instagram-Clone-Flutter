@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../services/storage.dart';
+import '../models/user_model.dart' as userModel;
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,16 +35,20 @@ class AuthServices {
         final profileUrl = await StorageServices()
             .uploadFileToStorage('profilePics', imageFile, false);
 
+        userModel.User user = userModel.User(
+          username: username,
+          uid: credential.user!.uid,
+          bio: bio,
+          profileUrl: profileUrl,
+          followers: [],
+          following: [],
+        );
+
         //* Add User Data to Firestore
-        await _firestore.collection('users').doc(credential.user!.uid).set({
-          'username': username,
-          'uid': credential.user!.uid,
-          'bio': bio,
-          // 'image': imageFile,
-          'followers': [],
-          'following': [],
-          'profileUrl': profileUrl,
-        });
+        await _firestore
+            .collection('users')
+            .doc(credential.user!.uid)
+            .set(user.toJson());
 
         res = 'Success';
       }
